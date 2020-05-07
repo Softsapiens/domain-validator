@@ -1,0 +1,33 @@
+= README
+:author: Dani Pous
+:toc:
+:toclevels: 5
+
+
+== Build
+
+As simple as `cargo build`.
+
+== Play It
+
+In order to run it, it is required to have an available Kafka Broker. One way of start it locally is:
+
+```bash
+docker run -d --net=host --name zookeeper -p 2181:2181 wurstmeister/zookeeper
+
+docker run -d --net=host --name kafka -p 29092:9092 -e KAFKA_ZOOKEEPER_CONNECT=localhost:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 wurstmeister/kafka
+
+docker run -it --rm --net=host wurstmeister/kafka /opt/kafka/bin/kafka-topics.sh --create --topic domain.in --partitions 3 --replication-factor 1 --if-not-exists --zookeeper localhost:2181
+
+docker run -it --rm --net=host wurstmeister/kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:29092 --topic domain.out --from-beginning
+
+docker run -it --rm --net=host wurstmeister/kafka /opt/kafka/bin/kafka-console-producer.sh --request-required-acks 1 --broker-list localhost:29092 --topic domain.in
+
+```
+
+Input data command examples:
+
+```json
+{ "type": "ValidateDomain", "id": { "value": "id-telefonica-1" }, "client": { "value": "telefonica" }, "term": { "value": "telefonica-test.com" }, "domain": { "value": "telefonica-test.com" }, "official": { "value": true }, "version": { "value": "0.0.1" }, "ts": { "value": 1542784743000 }, "source": { "value": "domain-generator-tld" }, "correlationId": { "value": "telefonica-domain-generator-tld" } }
+{ "type": "ValidateDomain", "id": { "value": "id-google-1" }, "client": { "value": "google" }, "term": { "value": "google.com" }, "domain": { "value": "google.com" }, "official": { "value": true }, "version": { "value": "0.0.1" }, "ts": { "value": 1542784743000 }, "source": { "value": "domain-generator-tld" }, "correlationId": { "value": "google-domain-generator-tld" } }
+```
