@@ -3,6 +3,9 @@
 :toc:
 :toclevels: 5
 
+== Abstract
+
+This PoC is an evolution of the async processing example from rdkafka crate.
 
 == Build
 
